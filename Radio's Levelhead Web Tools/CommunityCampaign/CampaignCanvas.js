@@ -70,7 +70,7 @@ let ship = {
     current_id: "123",
     target_id: "123",
     traveling: false,
-    travel_percent: 0,
+    travel_progress: 0,
     pos: {x: 50, y: 50},
 };
 
@@ -80,6 +80,44 @@ function jumpTo(dest) {
     ship.current_id = dest;
     ship.target_id = dest;
     ship.pos = graph[ship.target_id].pos;
+}
+
+const animation_sample = 80;
+function travelTo(dest) {
+    ship.traveling = true;
+    ship.target_id = dest;
+    ship.travel_progress = 0;
+
+    let animation = setInterval(() => {
+        let t = ease(ship.travel_progress / animation_sample);
+        let start = graph[ship.current_id].pos;
+        let end = graph[ship.target_id].pos;
+        
+        ship.pos = lerp(start, end, t);
+
+        ship.travel_progress += 1;
+
+        loadCanvas();
+        if (ship.travel_progress >= animation_sample) {
+            ship.traveling = false;
+            ship.current_id = ship.target_id;
+            ship.travel_progress = 0;
+            
+            console.log("ending anination", ship.travel_progress);
+
+            clearInterval(animation);
+        }
+    }, 10);
+}
+
+const ease_coeff = 2.3;
+function ease(ratio) {
+    return 1.0 / (1.0 + Math.exp(-ease_coeff * (4.0 * ratio - 2.0)));
+}
+
+function lerp(start, end, t) {
+    return {x: start.x * (1.0 - t) + end.x * t,
+            y: start.y * (1.0 - t) + end.y * t}
 }
 
 // rendering
@@ -126,6 +164,10 @@ function loadCanvas() {
 }
 
 document.addEventListener('keydown', event => {
+    if (ship.traveling) {
+        return;
+    }
+
     let dir = jskey_to_dir[event.key];
     if (dir) {
         curr = ship.current_id;
@@ -133,9 +175,7 @@ document.addEventListener('keydown', event => {
 
         console.log("moving from", curr, "to", next);
         if (next && !next.locked) {
-            jumpTo(next.dest_id);
+            travelTo(next.dest_id);
         }
     }
-
-    loadCanvas();
 });
