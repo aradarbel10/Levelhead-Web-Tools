@@ -19,59 +19,74 @@ const jskey_to_dir = {
 
 // data modelling map and spaceship
 let graph = {
-    "123": {
+    "lvl1": {
         level_code: "1234567",
-        pos: {x: 50, y: 50},
+        pos: {x: 50, y: 70},
         biome: "maarla",
         connected_to: {
             "right": {
-                dest_id: "456",
+                dest_id: "lvl2",
                 locked: false,
             },
             "down": {
-                dest_id: "789",
+                dest_id: "lvl3",
                 locked: false,
+            },
+            "up": {
+                dest_id: "lvl4",
+                locked: true,
             }
         },
     },
-    "456": {
+    "lvl2": {
         level_code: "abcdefg",
         pos: {x: 150, y: 150},
         biome: "aqua",
         connected_to: {
             "up": {
-                dest_id: "123",
+                dest_id: "lvl1",
                 locked: false,
             },
             "left": {
-                dest_id: "789",
+                dest_id: "lvl3",
                 locked: false,
             }
         },
     },
-    "789": {
+    "lvl3": {
         level_code: "tuvwxyz",
         pos: {x: 50, y: 150},
         biome: "kistoon",
         connected_to: {
             "up": {
-                dest_id: "123",
+                dest_id: "lvl1",
                 locked: false,
             },
             "right": {
-                dest_id: "456",
+                dest_id: "lvl2",
                 locked: false,
             }
         },
-    }
+    },
+    "lvl4": {
+        level_code: "0987654",
+        pos: {x: 200, y: 50},
+        biome: "asteroids",
+        connected_to: {
+            "left": {
+                dest_id: "lvl1",
+                locked: true,
+            }
+        }
+    },
 };
 
 let ship = {
-    current_id: "123",
-    target_id: "123",
+    current_id: "lvl1",
+    target_id: "lvl1",
     traveling: false,
     travel_progress: 0,
-    pos: {x: 50, y: 50},
+    pos: {x: 50, y: 70},
 };
 
 
@@ -110,6 +125,11 @@ function travelTo(dest) {
     }, 10);
 }
 
+// function connectedUnlocked(src, dest) {
+//     if (graph[src]?.)
+// }
+
+// animation math stuff
 const ease_coeff = 2.3;
 function ease(ratio) {
     return 1.0 / (1.0 + Math.exp(-ease_coeff * (4.0 * ratio - 2.0)));
@@ -164,9 +184,7 @@ function loadCanvas() {
 }
 
 document.addEventListener('keydown', event => {
-    if (ship.traveling) {
-        return;
-    }
+    if (ship.traveling) { return; }
 
     let dir = jskey_to_dir[event.key];
     if (dir) {
