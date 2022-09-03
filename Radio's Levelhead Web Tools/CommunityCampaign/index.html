@@ -11,14 +11,16 @@
         <link rel="stylesheet" href="../CommonStyle.css">
         <script src="../ApplySettings.js"></script>
         <script src="../LevelCards.js"></script>
+        <script src="CampaignCanvas.js"></script>
+        <script src="CampaignAPI.js"></script>
     </head>
     <body>
-        <canvas style="height:200px ;width:200px;background-color: black;" id="campaignCanvas"></canvas>
+        <canvas height=600 width=600 style="background-color: seagreen;" id="campaignCanvas"></canvas>
 
         <script>
-            loadCanvas();
             generateToolFooter();
             loadOptions();
+            loadCanvas();
         </script>
     </body>
 </html>
